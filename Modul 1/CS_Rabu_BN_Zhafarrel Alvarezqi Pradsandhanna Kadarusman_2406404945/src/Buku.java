@@ -1,19 +1,29 @@
 public class Buku {
     String judul;
     int year;
-    BookGenre BookGenre;
-    Author Author;
+    BookGenre genre;
+    Author author;
 
-    static void getCurrentAge{
-        int currentAge = year - Author.tahunLahir;
+    Buku(String judul, int year, BookGenre genre, Author author){
+        this.judul = judul;
+        this.year = year;
+        this.genre = genre;
+        this.author = author;
     }
 
-    int currentAge = getCurrentAge;
 
-    static void showDetail{
-        System.out.println("Judul: " + Buku.judul);
-        System.out.println("Genre: " + Buku.BookGenre);
-        System.out.println("Tahun Terbit: " + Buku.year);
-        System.out.println("Usia Author Saat Buku Diterbitkan: " + currentAge);
+    public int getCurrentAge(){
+        int currentAge = this.year - this.author.tahunLahir;
+        return currentAge;
+    }
+
+
+    public void showDetail(){
+        System.out.println("Judul: " + this.judul);
+        System.out.println("Genre: " + this.genre);
+        System.out.println("Tahun Terbit: " + this.year);
+        System.out.println("Nama Author: " + this.author.nama);
+        System.out.println("Tahun Lahir: " + this.author.tahunLahir);
+        System.out.println("Usia Author Saat Buku Diterbitkan: " + getCurrentAge());
     }
 }

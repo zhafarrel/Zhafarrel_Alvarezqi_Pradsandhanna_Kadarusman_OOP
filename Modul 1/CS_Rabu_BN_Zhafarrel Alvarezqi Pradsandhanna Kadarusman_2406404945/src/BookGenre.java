@@ -1,7 +1,7 @@
-enum class BookGenre{
-    Fiksi;
-    NonFiksi;
-    Sains;
-    Sejarah;
+public enum BookGenre{
+    Fiksi,
+    NonFiksi,
+    Sains,
+    Sejarah,
 }
 
