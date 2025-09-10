@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="252cb703-f916-4f5a-91c4-d9a632aab9c8" name="Changes" comment="penambahan backend pada git" />
+    <list default="true" id="252cb703-f916-4f5a-91c4-d9a632aab9c8" name="Changes" comment="ubah jdk 24 menjadi 17" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -80,13 +80,22 @@
       <option name="project" value="LOCAL" />
       <updated>1757484905182</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="ubah jdk 24 menjadi 17">
+      <option name="closed" value="true" />
+      <created>1757485435009</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1757485435009</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Penambahan backend pada git" />
     <MESSAGE value="Update perbaikan CS1" />
     <MESSAGE value="penambahan backend pada git" />
-    <option name="LAST_COMMIT_MESSAGE" value="penambahan backend pada git" />
+    <MESSAGE value="ubah jdk 24 menjadi 17" />
+    <option name="LAST_COMMIT_MESSAGE" value="ubah jdk 24 menjadi 17" />
   </component>
 </project>
