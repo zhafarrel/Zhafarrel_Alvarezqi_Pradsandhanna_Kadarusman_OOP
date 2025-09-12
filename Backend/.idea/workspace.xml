@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="252cb703-f916-4f5a-91c4-d9a632aab9c8" name="Changes" comment="ubah jdk 24 menjadi 17" />
+    <list default="true" id="252cb703-f916-4f5a-91c4-d9a632aab9c8" name="Changes" comment="ubah jdk 24 menjadi 17">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Model/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Model/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Model/Score.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Model/Score.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Model/ShowDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Model/ShowDetail.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,21 +19,21 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "zhafarrel"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;zhafarrel&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/zhafarrel/Zhafarrel_Alvarezqi_Pradsandhanna_Kadarusman_OOP.git",
-    "accountId": "44cdc60d-d8e3-4dd5-803a-a60bf284d22f"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/zhafarrel/Zhafarrel_Alvarezqi_Pradsandhanna_Kadarusman_OOP.git&quot;,
+    &quot;accountId&quot;: &quot;44cdc60d-d8e3-4dd5-803a-a60bf284d22f&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="32UnKJ8crCwj6bY9FF8xgRWkxsR" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -35,6 +41,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.Main.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",

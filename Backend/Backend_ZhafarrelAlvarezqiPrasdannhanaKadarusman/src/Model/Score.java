@@ -38,11 +38,11 @@ public class Score {
     }
 
     public void showDetail(){
-        System.out.println("Score ID: " + getScoreId());
-        System.out.println("Player ID: " + player.getPlayerId());
-        System.out.println("Score Value: " + getValue());
-        System.out.println("Coins Collected: " + getCoinsCollected());
-        System.out.println("Distance: " + getDistance());
+        System.out.println("Score ID: " + scoreId);
+        System.out.println("Player ID: " + playerId);
+        System.out.println("Score Value: " + value);
+        System.out.println("Coins Collected: " + coinsCollected);
+        System.out.println("Distance: " + distance);
         System.out.println("Created At: " + createdAt);
     }
 

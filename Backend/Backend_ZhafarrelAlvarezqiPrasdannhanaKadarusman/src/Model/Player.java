@@ -27,11 +27,9 @@ public class Player {
         return username;
     }
 
-    public int updateHighscore(int newScore){
+    public void updateHighscore(int newScore){
         if(newScore > highscore){
-            return newScore;
-        }else{
-            return highscore;
+            this.highscore = newScore;
         }
     }
 
@@ -43,9 +41,10 @@ public class Player {
         totalDistance += distance;
     }
 
+
     public void showDetail(){
-        System.out.println("Player ID: " + getPlayerId());
-        System.out.println("Username: " + getUsername());
+        System.out.println("Player ID: " + playerId);
+        System.out.println("Username: " + username);
         System.out.println("Highscore: " + highscore);
         System.out.println("Total Coins: " + totalCoins);
         System.out.println("Total Distance: " + totalDistance);
