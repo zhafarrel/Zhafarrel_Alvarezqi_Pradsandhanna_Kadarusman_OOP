@@ -23,9 +23,6 @@ public class Player {
         return playerId;
     }
 
-    public String getUsername(){
-        return username;
-    }
 
     public void updateHighscore(int newScore){
         if(newScore > highscore){
