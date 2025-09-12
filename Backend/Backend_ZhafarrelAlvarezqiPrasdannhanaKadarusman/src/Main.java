@@ -1,6 +1,5 @@
 import Model.Player;
 import Model.Score;
-import Model.ShowDetail;
 
 public class Main {
     public static void main(String[] args) {
@@ -19,7 +18,6 @@ public class Main {
         p1.addCoins(s3.getCoinsCollected());
         p1.addDistance(s3.getDistance());
 
-        // Update p2 dengan s2
         p2.updateHighscore(s2.getValue());
         p2.addCoins(s2.getCoinsCollected());
         p2.addDistance(s2.getDistance());
