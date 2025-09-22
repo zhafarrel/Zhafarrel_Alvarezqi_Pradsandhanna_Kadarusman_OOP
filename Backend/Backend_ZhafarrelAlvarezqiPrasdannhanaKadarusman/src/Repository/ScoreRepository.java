@@ -1,58 +1,72 @@
 package Repository;
+
 import Model.Score;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public abstract class ScoreRepository extends BaseRepository{
-    public ScoreRepository(){
-        super(T, ID);
+public class ScoreRepository extends BaseRepository<Score, UUID> {
+
+    @Override
+    public void save(Score score) {
+        UUID id = getId(score);
+        dataMap.put(id, score);
+        allData.add(score);
     }
 
-    public UUID findPlayerById(UUID playerId){
-        return playerId;
+    @Override
+    public UUID getId(Score entity) {
+        return entity.getScoreId();
     }
 
-    public UUID findByPlayerIdOrderByValueDesc(UUID playerId){
-        return;
+    public List<Score> findByPlayerId(UUID playerId) {
+        return allData.stream()
+                .filter(score -> score.getPlayerId().equals(playerId))
+                .collect(Collectors.toList());
     }
 
-    public UUID findTopScores(int limit) {
-        return;
+    public List<Score> findByPlayerIdOrderByValueDesc(UUID playerId) {
+        return allData.stream()
+                .filter(score -> score.getPlayerId().equals(playerId))
+                .sorted((s1, s2) -> Integer.compare(s2.getValue(), s1.getValue()))
+                .collect(Collectors.toList());
     }
 
-    public UUID  findHighestScoreByPlayerId(UUID playerId){
-        return;
+    public List<Score> findTopScores(int limit) {
+        return allData.stream()
+                .sorted((s1, s2) -> Integer.compare(s2.getValue(), s1.getValue()))
+                .limit(limit)
+                .collect(Collectors.toList());
     }
 
-    public int findByValueGreaterThan(Integer minValue){
-        return;
+    public Optional<Score> findHighestScoreByPlayerId(UUID playerId) {
+        return allData.stream()
+                .filter(score -> score.getPlayerId().equals(playerId))
+                .max((s1, s2) -> Integer.compare(s1.getValue(), s2.getValue()));
     }
 
-    public UUID findAllByOrderByCreatedAtDesc() {
-        return;
+    public List<Score> findByValueGreaterThan(Integer minValue) {
+        return allData.stream()
+                .filter(score -> score.getValue() > minValue)
+                .collect(Collectors.toList());
+    }
+
+    public List<Score> findAllByOrderByCreatedAtDesc() {
+        return allData.stream()
+                .sorted((s1, s2) -> s2.getCreatedAt().compareTo(s1.getCreatedAt()))
+                .collect(Collectors.toList());
     }
 
     public Integer getTotalCoinsByPlayerId(UUID playerId) {
         return allData.stream()
-                .filter(score ->
-                        score.getPlayerId().equals(playerId))
+                .filter(score -> score.getPlayerId().equals(playerId))
                 .mapToInt(Score::getCoinsCollected)
                 .sum();
     }
 
-    public UUID getTotalDistanceByPlayerId(UUID playerId){
-        return;
+    public Integer getTotalDistanceByPlayerId(UUID playerId) {
+        return allData.stream()
+                .filter(score -> score.getPlayerId().equals(playerId))
+                .mapToInt(Score::getDistance)
+                .sum();
     }
-
-    @Override
-    public void save(Score score){
-
-    };
-
-    @Override
-    public HashMap getId(Score entity){
-
-    };
-
-
 }
