@@ -49,7 +49,7 @@ public class Player implements ShowDetail{
         System.out.println();
     }
 
-    public Object getUsername() {
+    public String getUsername() {
         return username;
     }
 

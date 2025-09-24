@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="252cb703-f916-4f5a-91c4-d9a632aab9c8" name="Changes" comment="Update Perbaikan CS2" />
+    <list default="true" id="252cb703-f916-4f5a-91c4-d9a632aab9c8" name="Changes" comment="Update Perbaikan CS3">
+      <change afterPath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Service/PlayerService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Service/ScoreService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Model/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Model/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Model/Score.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Model/Score.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Repository/BaseRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Repository/BaseRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Repository/PlayerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend_ZhafarrelAlvarezqiPrasdannhanaKadarusman/src/Repository/PlayerRepository.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -123,7 +132,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757683909713</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Update Perbaikan CS3">
+      <option name="closed" value="true" />
+      <created>1758554542741</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1758554542741</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -132,6 +149,7 @@
     <MESSAGE value="penambahan backend pada git" />
     <MESSAGE value="ubah jdk 24 menjadi 17" />
     <MESSAGE value="Update Perbaikan CS2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update Perbaikan CS2" />
+    <MESSAGE value="Update Perbaikan CS3" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update Perbaikan CS3" />
   </component>
 </project>

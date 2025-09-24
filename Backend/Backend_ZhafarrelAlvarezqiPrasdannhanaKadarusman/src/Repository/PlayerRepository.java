@@ -41,4 +41,19 @@ public class PlayerRepository extends BaseRepository<Player, UUID> {
                 .filter(player -> player.getHighScore() > minScore)
                 .collect(Collectors.toList());
     }
+
+    public List<Player> findAllByOrderByTotalCoinsDesc(int coins){
+        return allData.stream()
+                .sorted((p1, p2) -> Integer.compare(p2.getTotalCoins(), p1.getTotalCoins()))
+                .limit(coins)
+                .collect(Collectors.toList());
+    }
+
+    public List<Player> findAllByOrderByTotalDistanceTravelledDesc(int distance){
+        return allData.stream()
+                .sorted((p1, p2) -> Integer.compare(p2.getTotalDistance(), p1.getTotalDistance()))
+                .limit(distance)
+                .collect(Collectors.toList());
+    }
+
 }
