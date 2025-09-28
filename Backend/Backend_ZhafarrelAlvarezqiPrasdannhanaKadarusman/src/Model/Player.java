@@ -64,4 +64,20 @@ public class Player implements ShowDetail{
     public int getTotalDistance() {
         return totalDistance;
     }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setHighScore(int highScore) {
+        this.highScore = highScore;
+    }
+
+    public void setTotalCoins(int totalCoins) {
+        this.totalCoins = totalCoins;
+    }
+
+    public void setTotalDistance(int totalDistance) {
+        this.totalDistance = totalDistance;
+    }
 }

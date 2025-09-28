@@ -24,11 +24,6 @@ public class PlayerRepository extends BaseRepository<Player, UUID> {
                 .findFirst();
     }
 
-    public boolean existByUsername(String username) {
-        return allData.stream()
-                .anyMatch(player -> player.getUsername().equals(username));
-    }
-
     public List<Player> findTopPlayersByHighScore(int limit) {
         return allData.stream()
                 .sorted((p1, p2) -> Integer.compare(p2.getHighScore(), p1.getHighScore()))
@@ -42,18 +37,20 @@ public class PlayerRepository extends BaseRepository<Player, UUID> {
                 .collect(Collectors.toList());
     }
 
-    public List<Player> findAllByOrderByTotalCoinsDesc(int coins){
+    public boolean existByUsername(String username) {
+        return allData.stream()
+                .anyMatch(player -> player.getUsername().equals(username));
+    }
+
+    public List<Player> findAllByOrderByTotalCoinsDesc() {
         return allData.stream()
                 .sorted((p1, p2) -> Integer.compare(p2.getTotalCoins(), p1.getTotalCoins()))
-                .limit(coins)
                 .collect(Collectors.toList());
     }
 
-    public List<Player> findAllByOrderByTotalDistanceTravelledDesc(int distance){
+    public List<Player> findAllByOrderByTotalDistanceTravelledDesc() {
         return allData.stream()
                 .sorted((p1, p2) -> Integer.compare(p2.getTotalDistance(), p1.getTotalDistance()))
-                .limit(distance)
                 .collect(Collectors.toList());
     }
-
 }
