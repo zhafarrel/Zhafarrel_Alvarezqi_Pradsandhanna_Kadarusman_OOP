@@ -56,7 +56,7 @@ public class ScoreController {
         }
     }
 
-    @DeleteMapping("/{playerId}")
+    @DeleteMapping("/{scoreId}")
     public ResponseEntity<?> deleteScore(@PathVariable UUID scoreId) {
         try {
             scoreService.deleteScore(scoreId);
@@ -68,18 +68,63 @@ public class ScoreController {
     }
 
     @GetMapping("/player/{playerId}")
-    public ResponseEntity<?>  getScoresByPlayerId (@PathVariable UUID playerId) {
+    public ResponseEntity<List<Score>>  getScoresByPlayerId (@PathVariable UUID playerId) {
         List<Score> score = scoreService.getScoresByPlayerId(playerId);
+            return ResponseEntity.ok(score);
+        }
+
+    @GetMapping("/player/{playerId}/ordered")
+    public ResponseEntity<List<Score>> getScoresByPlayerIdOrdered  (@PathVariable UUID playerId) {
+        List<Score> score = scoreService.getScoresByPlayerId(playerId);
+            return ResponseEntity.ok(score);
+    }
+
+    @GetMapping("/leaderboard")
+    public ResponseEntity<List<Score>> getLeaderboardByTotalCoins(@RequestParam(defaultValue = "10") int limit) {
+        List<Score> leaderboard = scoreService.getLeaderboard(limit);
+        return ResponseEntity.ok(leaderboard);
+    }
+
+    @GetMapping("/player/{playerId}/highest")
+    public ResponseEntity<?> getHighestScoreByPlayerId(@PathVariable UUID playerId) {
+        Optional<Score> highestScore = scoreService.getHighestScoreByPlayerId(playerId);
+        if (highestScore.isPresent()) {
+            return ResponseEntity.ok(highestScore.get());
+        } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"Score not found with playerId: " + playerId + "\"}");
+                    .body("{\"error\": \"No score found with ID: " + playerId + "\"}");
         }
     }
 
-    @GetMapping("/player/{playerId}/ordered")
-    public ResponseEntity<List<Score>>  getScoresByPlayerIdOrdered (@PathVariable UUID playerId) {
-        List<Score> score = scoreService.getScoresByPlayerIdOrderByValue(playerId);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"Score not found with playerId: " + playerId + "\"}");
-        }
+    @GetMapping("/above/{minValue}")
+    public ResponseEntity<List<Score>> getScoresAboveValue(@PathVariable Integer minValue) {
+        List<Score> scores = scoreService.getScoresAboveValue(minValue);
+        return ResponseEntity.ok(scores);
+    }
+
+    @GetMapping("/recent")
+    public ResponseEntity<List<Score>> getRecentScores() {
+        List<Score> recentScores = scoreService.getRecentScores();
+        return ResponseEntity.ok(recentScores);
+    }
+
+    @GetMapping("/player/{playerId}/total-coins")
+    public ResponseEntity<?> getTotalCoinsByPlayerId(@PathVariable UUID playerId){
+        Integer totalCoins = scoreService.getTotalCoinsByPlayerId(playerId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(totalCoins);
+    }
+
+    @GetMapping("/player/{playerId}/total-distance")
+    public ResponseEntity<?> getTotalDistanceByPlayerId(@PathVariable UUID playerId){
+        Integer totalDistance = scoreService.getTotalDistanceByPlayerId(playerId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(totalDistance);
+    }
+
+    @DeleteMapping("/player/{playerId}")
+    public ResponseEntity<?> deleteScoresByPlayerId(@PathVariable UUID playerId) {
+        scoreService.deleteScoresByPlayerId(playerId);
+        return ResponseEntity.ok("{\"message\": \"All scores from id " + playerId + " deleted successfully\"}");
     }
 }
