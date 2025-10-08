@@ -11,9 +11,9 @@ import java.util.UUID;
 @Repository
 public interface ScoreRepository extends JpaRepository<Score, UUID> {
     List<Score> findByPlayerId(UUID uuid);
-    List<Score> findByValueGreaterThan(Integer value);
-    List<Score> findAllByOrderByCreatedAtDesc(Integer minValue);
-    List<Score> findByPlayerIdOrderByValueDesc(UUID uuid);
+    List<Score> findByValueGreaterThan(Integer minValue);
+    List<Score> findAllByOrderByCreatedAtDesc();
+    List<Score> findByPlayerIdOrderByValueDesc(UUID playerId);
 
     @Query("SELECT s FROM Score s ORDER BY s.value DESC")
     List<Score> findTopScores(int limit);

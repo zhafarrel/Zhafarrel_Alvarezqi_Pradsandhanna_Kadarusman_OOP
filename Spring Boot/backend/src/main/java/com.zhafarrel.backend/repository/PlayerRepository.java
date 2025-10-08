@@ -18,10 +18,7 @@ public interface PlayerRepository extends JpaRepository<Player, UUID> {
 
     @Query("SELECT p FROM Player p ORDER BY p.highScore DESC")
     List<Player> findTopPlayersByHighScore(@Param("limit") int limit);
-
     List<Player> findByHighScoreGreaterThan(Integer minScore);
     List<Player> findAllByOrderByTotalCoinsDesc();
-
-
     List<Player> findAllByOrderByTotalDistanceTravelledDesc();
 }
