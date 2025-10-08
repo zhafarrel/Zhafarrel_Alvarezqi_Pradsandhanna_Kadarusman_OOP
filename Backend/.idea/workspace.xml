@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="252cb703-f916-4f5a-91c4-d9a632aab9c8" name="Changes" comment="Perbaikan kode CS4">
-      <change afterPath="$PROJECT_DIR$/../Spring Boot/backend/src/main/java/com.zhafarrel.backend/controller/PlayerController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Spring Boot/backend/src/main/java/com.zhafarrel.backend/model/Player.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Spring Boot/backend/src/main/java/com.zhafarrel.backend/model/Score.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Spring Boot/backend/src/main/java/com.zhafarrel.backend/repository/PlayerRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Spring Boot/backend/src/main/java/com.zhafarrel.backend/service/PlayerService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Spring Boot/backend/src/main/java/com.zhafarrel.backend/controller/PlayerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Spring Boot/backend/src/main/java/com.zhafarrel.backend/controller/PlayerController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
