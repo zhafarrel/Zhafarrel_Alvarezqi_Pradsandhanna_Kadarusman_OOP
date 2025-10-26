@@ -70,13 +70,13 @@ public class ScoreController {
     @GetMapping("/player/{playerId}")
     public ResponseEntity<List<Score>>  getScoresByPlayerId (@PathVariable UUID playerId) {
         List<Score> score = scoreService.getScoresByPlayerId(playerId);
-            return ResponseEntity.ok(score);
-        }
+        return ResponseEntity.ok(score);
+    }
 
     @GetMapping("/player/{playerId}/ordered")
     public ResponseEntity<List<Score>> getScoresByPlayerIdOrdered  (@PathVariable UUID playerId) {
-        List<Score> score = scoreService.getScoresByPlayerId(playerId);
-            return ResponseEntity.ok(score);
+        List<Score> score = scoreService.getScoresByPlayerIdOrderByValue(playerId);
+        return ResponseEntity.ok(score);
     }
 
     @GetMapping("/leaderboard")

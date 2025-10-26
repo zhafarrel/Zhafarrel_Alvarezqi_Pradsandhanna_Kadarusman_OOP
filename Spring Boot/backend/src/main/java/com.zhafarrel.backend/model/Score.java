@@ -1,3 +1,4 @@
+
 package com.zhafarrel.backend.model;
 
 import jakarta.persistence.*;
