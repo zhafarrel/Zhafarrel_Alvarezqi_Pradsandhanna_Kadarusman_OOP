@@ -8,17 +8,16 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Ground{
-    float GROUND_HEIGHT = 50f;
-    Rectangle collider;
+    private static final float GROUND_HEIGHT = 50f;
+    private Rectangle collider;
 
     Ground(){
         this.collider = new Rectangle(0,0,2 * Gdx.graphics.getWidth(), GROUND_HEIGHT);
     }
 
     public void update(float cameraX){
-        float groundWidth = 2 * Gdx.graphics.getWidth();
         collider.setPosition(cameraX - Gdx.graphics.getWidth() / 2f - 500 , 0);
-        collider.setWidth(2 * GROUND_HEIGHT);
+        collider.setWidth(2 * Gdx.graphics.getWidth());
     }
 
     public boolean isColliding(Rectangle playerCollider){

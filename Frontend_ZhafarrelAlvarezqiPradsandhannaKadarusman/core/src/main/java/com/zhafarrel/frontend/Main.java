@@ -1,53 +1,107 @@
-package com.zhafarrel.frontend;
+package com.zhafarrel.frontend; // Ganti dengan nama package kalian
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+
 public class Main extends ApplicationAdapter {
-    private SpriteBatch batch;
-    private Texture image;
+    // TODO: Deklarasikan Attribute yang hanya dapat diakses di dalam classyang sama:
+    private ShapeRenderer shapeRenderer;
+    private Player player;
+    private Ground ground;
+    private GameManager gameManager;
 
-    public class Ground{
-        float GROUND_HEIGHT = 50f;
-        Rectangle collider;
+    // TODO: Deklarasikan Attribute Camera System yang hanya dapat diakses di dalam class yang sama:
+    private OrthographicCamera camera;
+    private float cameraOffset = 0.2f;
 
-        Ground(){
-            this.collider = new Rectangle(0,0,2 * Gdx.graphics.getWidth(), GROUND_HEIGHT);
-        }
+    @Override
+    public void create() {
+        // TODO: Inisialisasi shapeRenderer
+        shapeRenderer = new ShapeRenderer();
 
-        public void update(float cameraX){
-            float groundWidth = 2 * Gdx.graphics.getWidth();
-            collider.setPosition(cameraX - Gdx.graphics.getWidth() / 2f - 500 , 0);
-            collider.setWidth(2 * GROUND_HEIGHT);
-        }
+        // TODO: Inisialisasi gameManager dengan mengambil instance tunggal
+        gameManager = GameManager.getInstance();
 
-        public boolean isColliding(Rectangle playerCollider){
-            if(collider.overlaps(playerCollider)) {
-                return true;
-            }else{
-                return false;
-            }
-        }
+        // TODO: Inisialisasi camera ortografis baru (OrthoGraphicCamera) dengan ukuran layar.
+        camera = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        camera.setToOrtho(false);
 
-        public float getTopY(){
-            return GROUND_HEIGHT;
-        }
+        // TODO: Inisialisasi player baru pada posisi awal (100, Gdx.graphics.getHeight() / 2f)
+        player = new Player(new Vector2(100, Gdx.graphics.getHeight() / 2f));
 
-        public void renderShape(ShapeRenderer shapeRenderer){
-            shapeRenderer.setColor(0.5f, 0.5f, 0.5f, 1f);
-            shapeRenderer.rect(collider.x, collider.y,2 * Gdx.graphics.getWidth(), GROUND_HEIGHT);
-        };
+        // TODO: Inisialisasi ground baru
+        ground = new Ground();
+
+        // TODO: Panggil sebuah method pada gameManager untuk mulai game
+        gameManager.startGame();
     }
+
+    @Override
+    public void render() {
+        float delta = Gdx.graphics.getDeltaTime();
+
+        // Update game logic
+        update(delta);
+
+        // TODO: Render: Bersihkan layar dengan warna latar belakang background bebas
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1);
+
+        shapeRenderer.setProjectionMatrix(camera.combined);
+
+        // TODO: Mulai sesi ShapeRenderer dengan tipe Filled
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        ScreenUtils.clear(0, 0, 0, 1);
+
+        // TODO: Panggil method pada ground dan player untuk memulai gambar
+        ground.renderShape(shapeRenderer);
+        player.renderShape(shapeRenderer);
+
+        // TODO: Akhiri sesi ShapeRenderer
+        shapeRenderer.end();
+    }
+
+    // TODO: Buatlah Method update(float delta) yang hanya dapat diakses di dalam class yang sama:
+ /*
+ * - Membuat variabel isFlying yang bernilai true saat tombol SPACE
+ditekan pada frame tersebut dan digunakan untuk memberitahu Player agar
+mengaktifkan mekanik terbang.
+ * - Meng-update player, camera, dan ground
+ * - Memastikan player selalu mengecek batas
+ * - Hitung dan perbarui skor/jarak jika ada perubahan jarak
+ */
+    private void update(float delta){
+        boolean isFlying = Gdx.input.isKeyPressed(Input.Keys.SPACE);
+        player.update(delta, isFlying);
+        updateCamera(delta);
+        ground.update(camera.position.x);
+        player.checkBoundaries(ground, Gdx.graphics.getHeight());
+
+        int currentScore = (int) player.getDistanceTraveled();
+        gameManager.setScore(currentScore);
+    }
+
+    // TODO: Buatlah Method updateCamera(float delta) yang hanya dapat diakses di dalam class yang sama:
+    /*
+    * - Hitung cameraFocus berdasarkan posisi player dan cameraOffset.
+   cameraFocus berfungsi sebagai titik fokus sumbu x pada camera.
+    * - Atur posisi sumbu-x camera agar sama dengan cameraFocus
+    * - Meng-update camera
+    */
+
+    private void updateCamera(float delta){
+        float cameraFocus = player.getPosition().x + (cameraOffset * Gdx.graphics.getWidth());
+        camera.position.x = cameraFocus;
+        camera.update();
+    }
+
     @Override
     public void dispose() {
-        batch.dispose();
-        image.dispose();
+        shapeRenderer.dispose();
     }
 }
