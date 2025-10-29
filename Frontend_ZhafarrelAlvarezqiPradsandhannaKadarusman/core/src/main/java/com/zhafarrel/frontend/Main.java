@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -12,20 +14,37 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture image;
 
-    @Override
-    public void create() {
-        batch = new SpriteBatch();
-        image = new Texture("libgdx.png");
-    }
+    public class Ground{
+        float GROUND_HEIGHT = 50f;
+        Rectangle collider;
 
-    @Override
-    public void render() {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        batch.begin();
-        batch.draw(image, 140, 210);
-        batch.end();
-    }
+        Ground(){
+            this.collider = new Rectangle(0,0,2 * Gdx.graphics.getWidth(), GROUND_HEIGHT);
+        }
 
+        public void update(float cameraX){
+            float groundWidth = 2 * Gdx.graphics.getWidth();
+            collider.setPosition(cameraX - Gdx.graphics.getWidth() / 2f - 500 , 0);
+            collider.setWidth(2 * GROUND_HEIGHT);
+        }
+
+        public boolean isColliding(Rectangle playerCollider){
+            if(collider.overlaps(playerCollider)) {
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        public float getTopY(){
+            return GROUND_HEIGHT;
+        }
+
+        public void renderShape(ShapeRenderer shapeRenderer){
+            shapeRenderer.setColor(0.5f, 0.5f, 0.5f, 1f);
+            shapeRenderer.rect(collider.x, collider.y,2 * Gdx.graphics.getWidth(), GROUND_HEIGHT);
+        };
+    }
     @Override
     public void dispose() {
         batch.dispose();
