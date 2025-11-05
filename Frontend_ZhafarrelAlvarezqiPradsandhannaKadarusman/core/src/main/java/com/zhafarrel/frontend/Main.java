@@ -50,13 +50,13 @@ public class Main extends ApplicationAdapter {
         update(delta);
 
         // TODO: Render: Bersihkan layar dengan warna latar belakang background bebas
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1);
+        ScreenUtils.clear(0, 0, 0, 1);
 
         shapeRenderer.setProjectionMatrix(camera.combined);
 
         // TODO: Mulai sesi ShapeRenderer dengan tipe Filled
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        ScreenUtils.clear(0, 0, 0, 1);
+
 
         // TODO: Panggil method pada ground dan player untuk memulai gambar
         ground.renderShape(shapeRenderer);

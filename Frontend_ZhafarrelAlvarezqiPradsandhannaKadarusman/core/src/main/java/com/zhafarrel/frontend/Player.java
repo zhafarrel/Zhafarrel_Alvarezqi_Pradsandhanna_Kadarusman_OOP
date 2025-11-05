@@ -38,7 +38,7 @@ public class Player {
         distanceTraveled += velocity.x * delta;
     }
 
-    private void  updatePosition(float delta){
+    private void updatePosition(float delta){
         position.x += velocity.x * delta;
         position.y += velocity.y * delta;
     }
