@@ -12,9 +12,9 @@ public class HomingMissile extends BaseObstacle{
     private float width = 40f;
     private float height = 20f;
 
-    public HomingMissile(Vector2 startPosition, int length) {
-        super(startPosition, length);
-        this.velocity = velocity;
+    public HomingMissile(Vector2 startPosition) {
+        super(startPosition, 0);
+        this.velocity = new Vector2();
     }
 
     @Override
@@ -31,38 +31,39 @@ public class HomingMissile extends BaseObstacle{
         if (target == null) {
             return false;
         }
-        if (){
+        float targetCenterX = target.getPosition().x + target.getWidth() / 2f;
+        float missileCenterX = this.position.x + this.width / 2f;
+        if (targetCenterX > missileCenterX){
+            return true;
         }
         return false;
     }
 
     public void update(float delta){
         if(target != null && active){
-            this.targetPosition = targetPosition;
+            Vector2 targetPosition = new Vector2(target.getPosition());
+            targetPosition.x += target.getWidth() / 2f;
+            targetPosition.y += target.getHeight() / 2f;
             velocity.set(targetPosition).sub(position).nor().scl(speed);
+            position.x += velocity.x * delta;
+            position.y += velocity.y * delta;
+            updateCollider();
         }
-        position.x = velocity.x * delta;
-        position.y = velocity.y * delta;
-        updateCollider();
     }
 
     @Override
     protected void updateCollider() {
-        collider = new Rectangle(position.x, position.y, WIDTH, length);
+        collider = new Rectangle(position.x, position.y, width, height);
     }
 
     @Override
     protected void drawShape(ShapeRenderer shapeRenderer) {
-        shapeRenderer.rect(position.x, position.y, WIDTH, length);
+        shapeRenderer.rect(position.x, position.y, width, height);
     }
 
     @Override
     protected float getRenderWidth() {
-        return length;
+        return width;
     }
 
-    @Override
-    protected float getRenderHeight() {
-        return WIDTH;
-    }
 }

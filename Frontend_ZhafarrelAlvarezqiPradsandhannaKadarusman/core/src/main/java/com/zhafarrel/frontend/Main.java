@@ -1,44 +1,73 @@
 package com.zhafarrel.frontend; // Ganti dengan nama package kalian
-
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.compression.lzma.Base;
+import com.zhafarrel.frontend.obstacles.BaseObstacle;
+import com.zhafarrel.frontend.factories.ObstacleFactory;
+import com.zhafarrel.frontend.obstacles.HomingMissile;
 
+import java.util.List;
 
-public class Main extends ApplicationAdapter {
-    // TODO: Deklarasikan Attribute yang hanya dapat diakses di dalam classyang sama:
+public class Main extends Game {
     private ShapeRenderer shapeRenderer;
+
+    // Game objects
     private Player player;
     private Ground ground;
     private GameManager gameManager;
 
-    // TODO: Deklarasikan Attribute Camera System yang hanya dapat diakses di dalam class yang sama:
+    // TODO: Deklarasikan ObstacleFactory, obstacleSpawnTimer, dan konstanta-konstanta untuk spawning
+    // - obstacleFactory (ObstacleFactory)
+    private ObstacleFactory obstacleFactory;
+    // - obstacleSpawnTimer (float)
+    private float obstacleSpawnTimer;
+    // - lastObstacleSpawnX (float) dengan nilai awal 0f
+    private float lastObstacleSpawnX = 0f;
+    // - OBSTACLE_SPAWN_INTERVAL (static final float) dengan nilai 2.5f
+    private static final float OBSTACLE_SPAWN_INTERVAL = 2.5f;
+    // - OBSTACLE_DENSITY (static final int) dengan nilai 1
+    private static final int OBSTACLE_DENSITY = 1;
+    // - SPAWN_AHEAD_DISTANCE (static final float) dengan nilai 300f
+    private static final float SPAWN_AHEAD_DISTANCE = 300f;
+    // - MIN_OBSTACLE_GAP (static final float) dengan nilai 200f
+    private static final float MIN_OBSTACLE_GAP = 200f;
+    // - OBSTACLE_CLUSTER_SPACING (static final float) dengan nilai 250f
+    private static final float OBSTACLE_CLUSTER_SPACING = 250f;
+
+    // Camera system
     private OrthographicCamera camera;
     private float cameraOffset = 0.2f;
 
+    private int screenWidth;
+    private int screenHeight;
+    private int lastLoggedScore = -1;
+
     @Override
     public void create() {
-        // TODO: Inisialisasi shapeRenderer
         shapeRenderer = new ShapeRenderer();
+        this.gameManager = GameManager.getInstance();
 
-        // TODO: Inisialisasi gameManager dengan mengambil instance tunggal
-        gameManager = GameManager.getInstance();
+        screenWidth = Gdx.graphics.getWidth();
+        screenHeight = Gdx.graphics.getHeight();
 
-        // TODO: Inisialisasi camera ortografis baru (OrthoGraphicCamera) dengan ukuran layar.
-        camera = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        camera.setToOrtho(false);
+        // Initialize camera
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, screenWidth, screenHeight);
 
-        // TODO: Inisialisasi player baru pada posisi awal (100, Gdx.graphics.getHeight() / 2f)
-        player = new Player(new Vector2(100, Gdx.graphics.getHeight() / 2f));
-
-        // TODO: Inisialisasi ground baru
+        player = new Player(new Vector2(100, screenHeight / 2f));
         ground = new Ground();
 
-        // TODO: Panggil sebuah method pada gameManager untuk mulai game
+        // TODO: Inisialisasi obstacleFactory dan obstacleSpawnTimer
+        obstacleFactory = new ObstacleFactory();
+        obstacleSpawnTimer = 0f;
+
         gameManager.startGame();
     }
 
@@ -46,62 +75,201 @@ public class Main extends ApplicationAdapter {
     public void render() {
         float delta = Gdx.graphics.getDeltaTime();
 
-        // Update game logic
         update(delta);
+        // TODO: Panggil method renderGame(shapeRenderer)
+        renderGame(shapeRenderer);
+    }
 
-        // TODO: Render: Bersihkan layar dengan warna latar belakang background bebas
-        ScreenUtils.clear(0, 0, 0, 1);
+    private void update(float delta) {
+        boolean isFlying = Gdx.input.isKeyPressed(Input.Keys.SPACE);
 
+        // TODO: Tambahkan logika untuk restart game jika player mati dan menekan tombol SPACE
+        // Jika player mati, panggil resetGame() dan hentikan eksekusi method update lebih lanjut (return)
+        if(player.isDead()){
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                resetGame();
+            }
+            return;
+        }
+        player.update(delta, isFlying);
+        updateCamera(delta);
+
+        ground.update(camera.position.x);
+        player.checkBoundaries(ground, screenHeight);
+
+        // TODO: Panggil method untuk update dan check collision pada obstacles
+        updateObstacles(delta);
+        checkCollision();
+        // Calculate distance-based score and log changes
+        int currentScoreMeters = (int)player.getDistanceTraveled();
+        int previousScoreMeters = gameManager.getScore();
+
+        if (currentScoreMeters > previousScoreMeters) {
+            if (currentScoreMeters != lastLoggedScore) {
+                System.out.println("Distance: " + currentScoreMeters +
+                    "m");
+                lastLoggedScore = currentScoreMeters;
+            }
+            gameManager.setScore(currentScoreMeters);
+        }
+    }
+
+    // TODO: Buatlah method private void renderGame(ShapeRenderer shapeRenderer)
+ /*
+ * - Bersihkan layar.
+ * - Atur projection matrix shapeRenderer ke camera.combined.
+ * - Mulai sesi ShapeRenderer dengan tipe Filled.
+ * - Render ground dan player.
+ * - Atur warna shapeRenderer menjadi MERAH.
+ * - Loop semua obstacle yang aktif dari obstacleFactory, lalu
+render setiap obstacle.
+ * - Akhiri sesi ShapeRenderer.
+ */
+    private void renderGame(ShapeRenderer shapeRenderer){
+        ScreenUtils.clear(Color.BLACK);
         shapeRenderer.setProjectionMatrix(camera.combined);
 
-        // TODO: Mulai sesi ShapeRenderer dengan tipe Filled
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-
-        // TODO: Panggil method pada ground dan player untuk memulai gambar
         ground.renderShape(shapeRenderer);
         player.renderShape(shapeRenderer);
 
-        // TODO: Akhiri sesi ShapeRenderer
+        shapeRenderer.setColor(Color.RED);
+
+        List<BaseObstacle> obstacles = obstacleFactory.getAllInUseObstacles();
+        for(BaseObstacle o : obstacles ){
+            if(o.isActive()){
+                o.render(shapeRenderer);
+            }
+        }
         shapeRenderer.end();
     }
 
-    // TODO: Buatlah Method update(float delta) yang hanya dapat diakses di dalam class yang sama:
- /*
- * - Membuat variabel isFlying yang bernilai true saat tombol SPACE
-ditekan pada frame tersebut dan digunakan untuk memberitahu Player agar
-mengaktifkan mekanik terbang.
- * - Meng-update player, camera, dan ground
- * - Memastikan player selalu mengecek batas
- * - Hitung dan perbarui skor/jarak jika ada perubahan jarak
- */
-    private void update(float delta){
-        boolean isFlying = Gdx.input.isKeyPressed(Input.Keys.SPACE);
-        player.update(delta, isFlying);
-        updateCamera(delta);
-        ground.update(camera.position.x);
-        player.checkBoundaries(ground, Gdx.graphics.getHeight());
 
-        int currentScore = (int) player.getDistanceTraveled();
-        gameManager.setScore(currentScore);
-    }
-
-    // TODO: Buatlah Method updateCamera(float delta) yang hanya dapat diakses di dalam class yang sama:
-    /*
-    * - Hitung cameraFocus berdasarkan posisi player dan cameraOffset.
-   cameraFocus berfungsi sebagai titik fokus sumbu x pada camera.
-    * - Atur posisi sumbu-x camera agar sama dengan cameraFocus
-    * - Meng-update camera
-    */
-
-    private void updateCamera(float delta){
-        float cameraFocus = player.getPosition().x + (cameraOffset * Gdx.graphics.getWidth());
+    private void updateCamera(float delta) {
+        float cameraFocus = player.getPosition().x + screenWidth *
+            cameraOffset;
         camera.position.x = cameraFocus;
         camera.update();
+    }
+
+    // TODO: Buatlah method private void updateObstacles(float delta)
+ /*
+ * - Tambahkan delta ke obstacleSpawnTimer.
+ * - Jika obstacleSpawnTimer melebihi OBSTACLE_SPAWN_INTERVAL,
+panggil spawnObstacle() dan reset timer.
+ * - Dapatkan posisi tepi kiri kamera.
+ * - Loop semua obstacle yang aktif:
+ * - Jika obstacle adalah HomingMissile, set target-nya ke player
+16
+dan panggil update(delta).
+ * - Jika obstacle sudah di luar layar, lepaskan (release)
+obstacle tersebut.
+ */
+    private void updateObstacles(float delta){
+        obstacleSpawnTimer += delta;
+        if(obstacleSpawnTimer >= OBSTACLE_SPAWN_INTERVAL){
+            spawnObstacle();
+            obstacleSpawnTimer = 0f;
+        }
+
+        float cameraLeftEdge = camera.position.x - screenWidth / 2f;
+
+        List<BaseObstacle> obstacles = obstacleFactory.getAllInUseObstacles();
+        for(BaseObstacle o : obstacles){
+            if(o instanceof HomingMissile){
+                HomingMissile hm = (HomingMissile) o;
+                hm.setTarget(player);
+                hm.update(delta);
+            }
+            if(o.isOffScreenCamera(cameraLeftEdge)){
+                obstacleFactory.releaseObstacle(o);
+            }
+        }
+    }
+
+
+    // TODO: Buatlah method private void spawnObstacle(). Method ini memastikan rintangan baru selalu muncul di depan kamera dan menjaga jarak minimum dari rintangan sebelumnya (clustering).
+ /*
+ * * 1. Pengecekan Posisi Spawn Dasar:
+ * - Hitung tepi kanan kamera. Tepi kanan kamera adalah posisi kamera
+pada sumbu-x ditambah dengan setengah dari lebar layar.
+ * - Hitung posisi spawn di depan kamera (float spawnAheadOfCamera):
+Perhitungannya adalah tepi kanan kamera + SPAWN_AHEAD_DISTANCE.
+ * - Hitung posisi spawn setelah rintangan terakhir (float
+spawnAfterLastObstacle): Perhitungannya adalah lastObstacleSpawnX ditambah
+MIN_OBSTACLE_GAP.
+ * * - Hitung posisi spawn dasar (float baseSpawnX): Pilih yang nilainya
+paling besar antara spawnAheadOfCamera dan spawnAfterLastObstacle.
+ * (Ini memastikan spawn terjadi paling jauh di depan kamera DAN setelah
+gap minimum dari rintangan terakhir).
+ * * 2. Pembuatan Rintangan (Clustering):
+ * - Loop sebanyak OBSTACLE_DENSITY:
+ * - Hitung posisi spawnX untuk setiap rintangan dalam satu
+cluster.
+ * - Panggil obstacleFactory.createRandomObstacle(...) untuk
+membuat rintangan baru. Berikan ground.getTopY(), spawnX, dan
+player.getHeight() sebagai parameter.
+ * - Perbarui lastObstacleSpawnX dengan nilai spawnX saat ini.
+ */
+    private void spawnObstacle(){
+        float cameraRightEdge = camera.position.x + screenWidth / 2f;
+        float spawnAheadOfCamera = cameraRightEdge + SPAWN_AHEAD_DISTANCE;
+        float spawnAfterLastObstacle = lastObstacleSpawnX + MIN_OBSTACLE_GAP;
+        float baseSpawnX = Math.max(spawnAheadOfCamera, spawnAfterLastObstacle);
+
+        for(int i=0; i < OBSTACLE_DENSITY; i++){
+            float spawnX = baseSpawnX + 1 * OBSTACLE_CLUSTER_SPACING;
+            BaseObstacle obstacle= obstacleFactory.createRandomObstacle(ground.getTopY(), spawnX, player.getHeight());
+            lastObstacleSpawnX = spawnX;
+        }
+    }
+        // TODO: Buatlah method private void checkCollisions()
+        /*
+         * - Dapatkan collider player.
+         * - Loop semua obstacle yang aktif:
+         * - Jika obstacle bertabrakan dengan player:
+         * - Tampilkan pesan "GAME OVER" dan instruksi untuk restart.
+         * - Panggil method untuk mematikan player.
+         * - Hentikan eksekusi method.
+         */
+        private void checkCollision(){
+            Rectangle playerCollider = player.getCollider();
+            List<BaseObstacle> obstacles = obstacleFactory.getAllInUseObstacles();
+            for(BaseObstacle o : obstacles){
+                if (o.isActive() && o.isColliding(playerCollider)) {
+                    System.out.println("Game Over - Space To Restart");
+                    player.die();
+                    return;
+                }
+            }
+        }
+
+
+    // TODO: Buatlah method private void resetGame()
+    /*
+     * - Panggil method untuk reset player.
+     * - Lepaskan (release) semua obstacle melalui obstacleFactory.
+     * - Reset obstacleSpawnTimer dan lastObstacleSpawnX.
+     * - Reset posisi kamera.
+     * - Reset skor di gameManager dan reset lastLoggedScore.
+     * - Cetak pesan "Game reset!".
+     */
+    private void resetGame(){
+        player.reset();
+        obstacleFactory.releaseAllObstacles();
+        obstacleSpawnTimer = 0f;
+        lastObstacleSpawnX = 0f;
+        camera.position.x = player.getPosition().x + screenWidth * cameraOffset;
+        camera.update();
+        gameManager.setScore(0);
+        lastLoggedScore = -1;
+        System.out.println("Game reset");
     }
 
     @Override
     public void dispose() {
         shapeRenderer.dispose();
+        // TODO: Lepaskan (release) semua obstacle saat game ditutup.
+        obstacleFactory.releaseAllObstacles();
     }
 }

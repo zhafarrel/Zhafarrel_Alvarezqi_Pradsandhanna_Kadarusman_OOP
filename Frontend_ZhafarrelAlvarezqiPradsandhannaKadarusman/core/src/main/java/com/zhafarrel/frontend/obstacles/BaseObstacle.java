@@ -24,7 +24,7 @@ public abstract class BaseObstacle {
     }
 
     public void render(ShapeRenderer shapeRenderer){
-        if(!active){
+        if(active){
             drawShape(shapeRenderer);
         }
     }
@@ -41,7 +41,7 @@ public abstract class BaseObstacle {
     }
 
     public boolean isOffScreenCamera(float cameraLeftEdge){
-        if(collider.x < getRenderWidth()){
+        if(collider.x + collider.width < getRenderWidth()){
             return true;
         }
         return false;
@@ -50,10 +50,9 @@ public abstract class BaseObstacle {
     protected abstract void updateCollider();
     protected abstract void drawShape(ShapeRenderer shapeRenderer);
     protected abstract float getRenderWidth();
-    protected abstract float getRenderHeight();
 
     public void setActive(boolean active){
-        this.active = true;
+        this.active = active;
     }
 
     public void setPosition(float x, float y){

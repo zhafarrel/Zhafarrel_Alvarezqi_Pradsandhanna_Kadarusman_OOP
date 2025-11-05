@@ -17,14 +17,21 @@ public class Player {
     private float height = 64f;
     private float baseSpeed = 300f;
     private float distanceTraveled = 0f;
+    //CS 8
+    private boolean isDead;
+    private Vector2 startPosition;
 
     Player(Vector2 startPosition){
         this.position = new Vector2(startPosition);
+        this.startPosition = new Vector2(startPosition);
         this.velocity = new Vector2(baseSpeed, 0);
         this.collider = new Rectangle(position.x, position.y, width, height);
     }
 
     public void update(float delta, boolean isFlying){
+        if(isDead){
+            return;
+        }
         updateDistanceAndSpeed(delta);
         updatePosition(delta);
         applyGravity(delta);
@@ -99,5 +106,24 @@ public class Player {
 
     public float getDistanceTraveled(){
         return distanceTraveled / 10f;
+    }
+
+    //CS 8
+    public void die(){
+        isDead = true;
+        velocity.set(0, 0);
+        System.out.println("Player Died");
+    }
+
+    public void reset(){
+        isDead = false;
+        position.set(startPosition);
+        velocity.set(baseSpeed, 0);
+        distanceTraveled = 0f;
+        System.out.println("Player reset");
+    }
+
+    public boolean isDead(){
+        return isDead;
     }
 }
