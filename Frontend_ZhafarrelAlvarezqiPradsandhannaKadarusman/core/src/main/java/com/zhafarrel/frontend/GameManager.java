@@ -1,12 +1,15 @@
 package com.zhafarrel.frontend;
 
+import com.zhafarrel.frontend.observers.Observer;
+import com.zhafarrel.frontend.observers.ScoreManager;
+
 public class GameManager {
     private static GameManager instance;
-    private int score;
+    private ScoreManager scoreManager;
     private boolean gameActive;
 
     private GameManager(){
-        this.score = 0;
+        this.scoreManager = scoreManager;
         this.gameActive = false;
     }
 
@@ -25,11 +28,15 @@ public class GameManager {
 
     public void setScore(int newScore){
         if(gameActive){
-            score = newScore;
+            scoreManager= newScore;
         }
     }
 
     public int getScore(){
-        return score;
+        return scoreManager;
+    }
+
+    public void addObserver(Observer observer){
+        scoreManager.add
     }
 }

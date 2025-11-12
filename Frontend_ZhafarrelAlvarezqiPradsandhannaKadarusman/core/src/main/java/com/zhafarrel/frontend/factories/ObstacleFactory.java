@@ -56,9 +56,7 @@ public class ObstacleFactory {
         totalWeight += weight;
     }
     /** Factory Method using weighted random selection */
-    public BaseObstacle createRandomObstacle(float groundTopY, float
-
-    spawnX, float playerHeight) {
+    public BaseObstacle createRandomObstacle(float groundTopY, float spawnX, float playerHeight) {
         if (weightedCreators.isEmpty()) {
             throw new IllegalStateException("No obstacle creators registered");
         }

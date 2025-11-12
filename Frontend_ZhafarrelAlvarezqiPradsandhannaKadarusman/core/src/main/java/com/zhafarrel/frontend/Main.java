@@ -218,7 +218,7 @@ player.getHeight() sebagai parameter.
         float baseSpawnX = Math.max(spawnAheadOfCamera, spawnAfterLastObstacle);
 
         for(int i=0; i < OBSTACLE_DENSITY; i++){
-            float spawnX = baseSpawnX + 1 * OBSTACLE_CLUSTER_SPACING;
+            float spawnX = baseSpawnX + i * OBSTACLE_CLUSTER_SPACING;
             BaseObstacle obstacle= obstacleFactory.createRandomObstacle(ground.getTopY(), spawnX, player.getHeight());
             lastObstacleSpawnX = spawnX;
         }
