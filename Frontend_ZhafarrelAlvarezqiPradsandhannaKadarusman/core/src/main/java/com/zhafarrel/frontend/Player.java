@@ -21,7 +21,7 @@ public class Player {
     private boolean isDead;
     private Vector2 startPosition;
 
-    Player(Vector2 startPosition){
+    public Player(Vector2 startPosition){
         this.position = new Vector2(startPosition);
         this.startPosition = new Vector2(startPosition);
         this.velocity = new Vector2(baseSpeed, 0);
