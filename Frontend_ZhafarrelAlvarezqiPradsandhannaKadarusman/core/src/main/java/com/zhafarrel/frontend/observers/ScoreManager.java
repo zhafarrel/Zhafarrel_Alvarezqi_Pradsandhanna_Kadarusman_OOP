@@ -8,9 +8,9 @@ public class ScoreManager implements Subject {
     private List<Observer> observers;
     private int score;
 
-    ScoreManager(List<Observer> observers, int score){
-        this.observers = new ArrayList<>();
-        this.score = 0;
+    public ScoreManager(){
+        observers = new ArrayList<>();
+        score = 0;
     }
     @Override
     public void addObserver(Observer observer) {

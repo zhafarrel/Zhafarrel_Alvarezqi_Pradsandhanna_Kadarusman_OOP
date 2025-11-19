@@ -84,7 +84,7 @@ public class Player {
     }
 
     public void renderShape(ShapeRenderer shapeRenderer){
-        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.setColor(Color.GREEN);
         shapeRenderer.rect(position.x, position.y, width, height);
     }
 

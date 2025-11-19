@@ -8,10 +8,10 @@ public class ScoreUIObserver implements Observer{
     private BitmapFont font;
     private SpriteBatch batch;
 
-    ScoreUIObserver(BitmapFont font, SpriteBatch batch){
-        this.font = new BitmapFont();
+    public ScoreUIObserver(){
+        font = new BitmapFont();
         font.setColor(Color.WHITE);
-        this.batch = new SpriteBatch();
+        batch = new SpriteBatch();
     }
 
     @Override
@@ -21,12 +21,13 @@ public class ScoreUIObserver implements Observer{
 
     public void render(int score){
         batch.begin();
-        batch.draw();
+        font.draw(batch, "Score: " + score, 20, 720 - 20);
         batch.end();
     }
 
     public void dispose(){
-        font.;
+        font.dispose();
+        batch.dispose();
     }
 
 }

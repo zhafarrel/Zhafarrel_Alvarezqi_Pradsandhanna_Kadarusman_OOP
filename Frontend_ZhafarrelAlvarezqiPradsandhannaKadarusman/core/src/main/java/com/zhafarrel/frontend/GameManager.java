@@ -8,35 +8,39 @@ public class GameManager {
     private ScoreManager scoreManager;
     private boolean gameActive;
 
-    private GameManager(){
-        this.scoreManager = scoreManager;
+    private GameManager() {
+        this.scoreManager = new ScoreManager();
         this.gameActive = false;
     }
 
-    public static GameManager getInstance(){
-        if(instance == null){
+    public static GameManager getInstance() {
+        if (instance == null) {
             instance = new GameManager();
         }
         return instance;
     }
 
-    public void startGame(){
-        score = 0;
+    public void startGame() {
+        scoreManager.setScore(0);
         gameActive = true;
         System.out.println("Game Started!");
     }
 
-    public void setScore(int newScore){
-        if(gameActive){
-            scoreManager= newScore;
+    public void setScore(int newScore) {
+        if (gameActive) {
+            scoreManager.setScore(newScore);
         }
     }
 
-    public int getScore(){
-        return scoreManager;
+    public int getScore() {
+        return scoreManager.getScore();
     }
 
-    public void addObserver(Observer observer){
-        scoreManager.add
+    public void addObserver(Observer observer) {
+        scoreManager.addObserver(observer);
+    }
+
+    public void removeObserver(Observer observer) {
+        scoreManager.removeObserver(observer);
     }
 }

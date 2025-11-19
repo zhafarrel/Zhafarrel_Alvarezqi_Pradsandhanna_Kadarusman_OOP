@@ -1,5 +1,6 @@
 package com.zhafarrel.frontend.commands;
 
+import com.badlogic.gdx.Gdx;
 import com.zhafarrel.frontend.Player;
 
 public class JetpackCommand implements Command{
@@ -12,7 +13,7 @@ public class JetpackCommand implements Command{
     @Override
     public void execute() {
         if(!player.isDead()){
-            player.fly();
+            player.fly(Gdx.graphics.getDeltaTime());
         }
     }
 }
