@@ -19,7 +19,7 @@ public class ScoreUIObserver implements Observer{
         System.out.println("Skor telah diperbarui!");
     }
 
-    public void render(int score){
+    public void render(int score, int coin){
         batch.begin();
         font.draw(batch, "Score: " + score, 20, 720 - 20);
         batch.end();

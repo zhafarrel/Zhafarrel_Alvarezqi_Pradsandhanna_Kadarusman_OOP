@@ -5,9 +5,9 @@ import com.zhafarrel.backend.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.List;
 
 @Service
 public class PlayerService {
@@ -38,7 +38,9 @@ public class PlayerService {
         Player existingPlayer = playerRepository.findById(playerId)
                 .orElseThrow(() -> new RuntimeException("Player not found with ID: " + playerId));
 
+        // Update only non-null fields
         if (updatedPlayer.getUsername() != null) {
+            // Check if new username is already taken by another player
             if (!existingPlayer.getUsername().equals(updatedPlayer.getUsername())
                     && playerRepository.existsByUsername(updatedPlayer.getUsername())) {
                 throw new RuntimeException("Username already exists: " + updatedPlayer.getUsername());
@@ -79,8 +81,10 @@ public class PlayerService {
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new RuntimeException("Player not found with ID: " + playerId));
 
+        // Update high score if this score is higher
         player.updateHighScore(scoreValue);
 
+        // Add coins and distance to totals
         player.addCoins(coinsCollected);
         player.addDistance(distanceTravelled);
 

@@ -3,7 +3,7 @@ package com.zhafarrel.frontend.pools;
 import com.badlogic.gdx.math.Vector2;
 import com.zhafarrel.frontend.Coin;
 
-public class CoinPool extends ObjectPool<Coin>{
+public class CoinPool extends ObjectPool<Coin> { //
 
     @Override
     protected Coin createObject() {
@@ -11,14 +11,17 @@ public class CoinPool extends ObjectPool<Coin>{
     }
 
     @Override
-    protected void resetObject(Coin object) {
+    public void resetObject(Coin coin) {
         coin.setActive(false);
     }
 
-    public  obtain(float x, float y){
-        super.obtain();
-        this.coin = coin;
+    public Coin obtain(float x, float y) {
+        Coin coin = super.obtain();
+
+        // Inisialisasi posisi koin
+        coin.setPosition(x, y);
+        coin.setActive(true);
+
         return coin;
     }
-
 }

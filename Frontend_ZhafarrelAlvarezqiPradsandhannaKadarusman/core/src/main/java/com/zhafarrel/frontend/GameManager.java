@@ -1,6 +1,8 @@
 package com.zhafarrel.frontend;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.zhafarrel.frontend.observers.Observer;
 import com.zhafarrel.frontend.observers.ScoreManager;
 import com.zhafarrel.frontend.services.BackendService;
@@ -10,13 +12,13 @@ public class GameManager {
     private ScoreManager scoreManager;
     private boolean gameActive;
     private BackendService backendService;
-    private String currentPlayerID;
+    private String currentPlayerId;
     private int coinsCollected;
 
     private GameManager() {
         this.scoreManager = new ScoreManager();
         this.gameActive = false;
-        this.backendService = new BackendService();
+        backendService = new BackendService();
     }
 
     public static GameManager getInstance() {
@@ -55,7 +57,13 @@ public class GameManager {
         backendService.createPlayer(username, new BackendService.RequestCallback() {
             @Override
             public void onSuccess(String response) {
-                try()
+                try{
+                    JsonValue json = new JsonReader().parse(response);
+                    currentPlayerId = json.getString("playerId");
+                    Gdx.app.log("GameManager", "Player ID Saved: " + currentPlayerId);
+                }catch (Exception e) {
+                    Gdx.app.error("GameManager", "Parsing error: " + e.getMessage());
+                }
 
             }
 
@@ -67,14 +75,14 @@ public class GameManager {
     }
 
     public void endGame(){
-        if(currentPlayerID == null){
+        if(currentPlayerId == null){
             System.out.println("Cannot Submit Score...");
             return;
         }
         int currentScore = scoreManager.getScore();
         int currentCoins = coinsCollected * 10;
         int endScore = currentScore + currentCoins;
-        backendService.submitScore(currentPlayerID, endScore, currentCoins, currentScore, new BackendService.RequestCallback() {
+        backendService.submitScore(currentPlayerId, endScore, coinsCollected, currentScore, new BackendService.RequestCallback() {
             @Override
             public void onSuccess(String response) {
                 Gdx.app.log("Success","Success");
@@ -89,7 +97,7 @@ public class GameManager {
 
     public void addCoin(){
         coinsCollected++;
-        Gdx.app.log("COIN COLLECTED!", "Total: ...")
+        Gdx.app.log("COIN COLLECTED!", "Total: " + coinsCollected);
     }
 
     public int getCoins(){

@@ -4,17 +4,16 @@ package com.zhafarrel.frontend.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.zhafarrel.frontend.Background;
-import com.zhafarrel.frontend.GameManager;
-import com.zhafarrel.frontend.Ground;
-import com.zhafarrel.frontend.Player;
+import com.zhafarrel.frontend.*;
 import com.zhafarrel.frontend.commands.Command;
 import com.zhafarrel.frontend.commands.JetpackCommand;
+import com.zhafarrel.frontend.factories.CoinFactory;
 import com.zhafarrel.frontend.factories.ObstacleFactory;
 import com.zhafarrel.frontend.observers.ScoreUIObserver;
 import com.zhafarrel.frontend.obstacles.BaseObstacle;
@@ -34,12 +33,14 @@ public class PlayingState implements GameState {
     private final Command jetpackCommand;
     private final ScoreUIObserver scoreUIObserver;
     private final ObstacleFactory obstacleFactory;
+    private final CoinFactory coinFactory;
 
 
     private float obstacleSpawnTimer;
     private float lastObstacleSpawnX = 0f;
     private static final float SPAWN_AHEAD_DISTANCE = 300f;
     private static final float OBSTACLE_CLUSTER_SPACING = 250f;
+    private float coinSpawnTimer = 0f;
 
 
     private final OrthographicCamera camera;
@@ -56,6 +57,7 @@ public class PlayingState implements GameState {
 
     public PlayingState(GameStateManager gsm) {
         this.gsm = gsm;
+        this.coinFactory = new CoinFactory();
         this.shapeRenderer = new ShapeRenderer();
         this.screenWidth = Gdx.graphics.getWidth();
         this.screenHeight = Gdx.graphics.getHeight();
@@ -103,33 +105,29 @@ public class PlayingState implements GameState {
 
 
         if (player.isDead()) {
+            GameManager.getInstance().endGame();
             gsm.set(new GameOverState(gsm));
             return;
         }
-
-
         player.update(delta, false);
         updateCamera(delta);
         background.update(camera.position.x);
         ground.update(camera.position.x);
         player.checkBoundaries(ground, screenHeight);
-
-
         updateObstacles(delta);
+        updateCoins(delta);
+        checkCoinCollisions();
         checkCollisions();
-
 
         int currentScoreMeters = (int) player.getDistanceTraveled();
         GameManager.getInstance().setScore(currentScoreMeters);
-
-
         if (currentScoreMeters > lastLoggedScore) {
             System.out.println("Distance: " + currentScoreMeters + "m");
             lastLoggedScore = currentScoreMeters;
         }
-
         updateDifficulty(currentScoreMeters);
     }
+
 
     private void updateDifficulty(int score) {
         if (score > 1000 && !(difficultyStrategy instanceof HardDifficultyStrategy)) {
@@ -144,28 +142,48 @@ public class PlayingState implements GameState {
 
     @Override
     public void render(SpriteBatch batch) {
-        if (spriteBatch == null) {
-            spriteBatch = new SpriteBatch();
+        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // 2. Cek Batch agar aman (gunakan batch dari parameter Main)
+        if (batch == null) {
+            if (spriteBatch == null) spriteBatch = new SpriteBatch();
+            batch = spriteBatch;
         }
 
+        // 3. Gambar Background (Layer Paling Bawah)
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        background.render(batch);
+        batch.end();
 
-        spriteBatch.setProjectionMatrix(camera.combined);
-        spriteBatch.begin();
-        background.render(spriteBatch);
-        spriteBatch.end();
-
-
+        // 4. Gambar Shape (Player, Obstacle, Coin)
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        // Gambar Player
         player.renderShape(shapeRenderer);
+
+        // Gambar Obstacle (Merah)
         shapeRenderer.setColor(Color.RED);
         for (BaseObstacle obstacle : obstacleFactory.getAllInUseObstacles()) {
             obstacle.render(shapeRenderer);
         }
+
+        // Gambar Coin (Kuning)
+        // Digabung di sini agar efisien (tidak perlu begin/end lagi)
+        for (Coin coin : coinFactory.getActiveCoins()) {
+            coin.renderShape(shapeRenderer);
+        }
+
         shapeRenderer.end();
 
-
-        scoreUIObserver.render(GameManager.getInstance().getScore());
+        // 5. Gambar UI Score (Layer Paling Atas)
+        // Mengambil data skor terbaru
+        int currentScore = GameManager.getInstance().getScore();
+        int currentCoins = GameManager.getInstance().getCoins();
+        // Menampilkan ke layar
+        scoreUIObserver.render(currentScore, currentCoins);
     }
 
 
@@ -230,6 +248,36 @@ public class PlayingState implements GameState {
         }
     }
 
+    private void checkCoinCollisions() {
+        Rectangle playerCollider = player.getCollider();
+        for (Coin coin : coinFactory.getActiveCoins()) {
+            if (coin.isColliding(playerCollider)) {
+                coin.setActive(false);
+                coinFactory.releaseCoin(coin);
+                GameManager.getInstance().addCoin();
+            }
+        }
+    }
+
+    private void updateCoins(float delta) {
+        coinSpawnTimer += delta;
+        if (coinSpawnTimer > 0.5f) {
+            float spawnX = camera.position.x + (Gdx.graphics.getWidth() / 2f) + 50; // Kanan Layar
+            coinFactory.createCoinPattern(spawnX, ground.getTopY());
+            coinSpawnTimer = 0f;
+        }
+
+        float cameraLeft = camera.position.x - (Gdx.graphics.getWidth() / 2f);
+
+        for (Coin coin : coinFactory.getActiveCoins()) {
+            coin.update(delta);
+            if (coin.getPosition().x < cameraLeft - 50) {
+                coinFactory.releaseCoin(coin);
+            }
+        }
+    }
+
+
 
     @Override
     public void dispose() {
@@ -240,5 +288,6 @@ public class PlayingState implements GameState {
         obstacleFactory.releaseAllObstacles();
         scoreUIObserver.dispose();
         background.dispose();
+        coinFactory.releaseAll();
     }
 }
