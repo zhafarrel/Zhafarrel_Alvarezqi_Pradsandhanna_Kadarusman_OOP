@@ -4,7 +4,6 @@ package com.zhafarrel.frontend.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -20,6 +19,10 @@ import com.zhafarrel.frontend.obstacles.BaseObstacle;
 import com.zhafarrel.frontend.obstacles.HomingMissile;
 import com.zhafarrel.frontend.strategies.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 
 public class PlayingState implements GameState {
     private final GameStateManager gsm;
@@ -33,14 +36,18 @@ public class PlayingState implements GameState {
     private final Command jetpackCommand;
     private final ScoreUIObserver scoreUIObserver;
     private final ObstacleFactory obstacleFactory;
+
+
     private final CoinFactory coinFactory;
+    private float coinSpawnTimer = 0f;
+    private final List<CoinPattern> coinPatterns;
+    private final Random random;
 
 
     private float obstacleSpawnTimer;
     private float lastObstacleSpawnX = 0f;
     private static final float SPAWN_AHEAD_DISTANCE = 300f;
     private static final float OBSTACLE_CLUSTER_SPACING = 250f;
-    private float coinSpawnTimer = 0f;
 
 
     private final OrthographicCamera camera;
@@ -57,10 +64,16 @@ public class PlayingState implements GameState {
 
     public PlayingState(GameStateManager gsm) {
         this.gsm = gsm;
-        this.coinFactory = new CoinFactory();
         this.shapeRenderer = new ShapeRenderer();
         this.screenWidth = Gdx.graphics.getWidth();
         this.screenHeight = Gdx.graphics.getHeight();
+        this.random = new Random();
+
+
+        this.coinFactory = new CoinFactory();
+        this.coinPatterns = new ArrayList<>();
+        this.coinPatterns.add(new LinePattern());
+        this.coinPatterns.add(new RectanglePattern());
 
 
         camera = new OrthographicCamera();
@@ -109,22 +122,32 @@ public class PlayingState implements GameState {
             gsm.set(new GameOverState(gsm));
             return;
         }
+
+
         player.update(delta, false);
         updateCamera(delta);
         background.update(camera.position.x);
         ground.update(camera.position.x);
         player.checkBoundaries(ground, screenHeight);
+
+
         updateObstacles(delta);
         updateCoins(delta);
-        checkCoinCollisions();
+
+
         checkCollisions();
+        checkCoinCollisions();
+
 
         int currentScoreMeters = (int) player.getDistanceTraveled();
         GameManager.getInstance().setScore(currentScoreMeters);
+
+
         if (currentScoreMeters > lastLoggedScore) {
-            System.out.println("Distance: " + currentScoreMeters + "m");
             lastLoggedScore = currentScoreMeters;
         }
+
+
         updateDifficulty(currentScoreMeters);
     }
 
@@ -142,48 +165,55 @@ public class PlayingState implements GameState {
 
     @Override
     public void render(SpriteBatch batch) {
-        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        // 2. Cek Batch agar aman (gunakan batch dari parameter Main)
-        if (batch == null) {
-            if (spriteBatch == null) spriteBatch = new SpriteBatch();
-            batch = spriteBatch;
+        if (spriteBatch == null) {
+            spriteBatch = new SpriteBatch();
         }
 
-        // 3. Gambar Background (Layer Paling Bawah)
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        background.render(batch);
-        batch.end();
 
-        // 4. Gambar Shape (Player, Obstacle, Coin)
+        spriteBatch.setProjectionMatrix(camera.combined);
+        spriteBatch.begin();
+        background.render(spriteBatch);
+//        spriteBatch.end();
+//
+//        shapeRenderer.setProjectionMatrix(camera.combined);
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+
+//        player.renderShape(shapeRenderer);
+        //baru
+        player.render(spriteBatch);
+        for (BaseObstacle obstacle : obstacleFactory.getAllInUseObstacles()) {
+            // Cek jika obstacle punya kemampuan render gambar (seperti HomingMissile)
+            obstacle.render(spriteBatch);
+        }
+        spriteBatch.end();
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        // batas
 
-        // Gambar Player
-        player.renderShape(shapeRenderer);
 
-        // Gambar Obstacle (Merah)
         shapeRenderer.setColor(Color.RED);
         for (BaseObstacle obstacle : obstacleFactory.getAllInUseObstacles()) {
-            obstacle.render(shapeRenderer);
+//            obstacle.render(shapeRenderer);
+            //baru
+            if (!(obstacle instanceof HomingMissile)) {
+                obstacle.render(shapeRenderer);
+            }
+            //batas
         }
 
-        // Gambar Coin (Kuning)
-        // Digabung di sini agar efisien (tidak perlu begin/end lagi)
+
         for (Coin coin : coinFactory.getActiveCoins()) {
             coin.renderShape(shapeRenderer);
         }
 
+
         shapeRenderer.end();
 
-        // 5. Gambar UI Score (Layer Paling Atas)
-        // Mengambil data skor terbaru
-        int currentScore = GameManager.getInstance().getScore();
-        int currentCoins = GameManager.getInstance().getCoins();
-        // Menampilkan ke layar
-        scoreUIObserver.render(currentScore, currentCoins);
+
+        scoreUIObserver.render(GameManager.getInstance().getScore(), GameManager.getInstance().getCoins());
+
+
     }
 
 
@@ -225,8 +255,6 @@ public class PlayingState implements GameState {
         float cameraRightEdge = camera.position.x + screenWidth / 2f;
         float spawnAheadOfCamera = cameraRightEdge + SPAWN_AHEAD_DISTANCE;
         float spawnAfterLastObstacle = lastObstacleSpawnX + difficultyStrategy.getMinGap();
-
-
         float baseSpawnX = Math.max(spawnAheadOfCamera, spawnAfterLastObstacle);
 
 
@@ -234,6 +262,41 @@ public class PlayingState implements GameState {
             float spawnX = baseSpawnX + (i * OBSTACLE_CLUSTER_SPACING);
             obstacleFactory.createRandomObstacle(ground.getTopY(), spawnX, player.getHeight());
             lastObstacleSpawnX = spawnX;
+        }
+    }
+
+
+    private void updateCoins(float delta) {
+        coinSpawnTimer += delta;
+
+
+        float spawnInterval = 2f + random.nextFloat() * 2f;
+
+
+        if (coinSpawnTimer >= spawnInterval) {
+            spawnCoins();
+            coinSpawnTimer = 0f;
+        }
+
+
+        float cameraLeft = camera.position.x - screenWidth / 2f;
+        for (Coin coin : coinFactory.getActiveCoins()) {
+            coin.update(delta);
+            if (coin.isOffScreenCamera(cameraLeft)) {
+                coinFactory.releaseCoin(coin);
+            }
+        }
+    }
+
+
+    private void spawnCoins() {
+        float cameraRightEdge = camera.position.x + screenWidth / 2f;
+        float spawnX = cameraRightEdge + 100f;
+
+
+        if (!coinPatterns.isEmpty()) {
+            CoinPattern pattern = coinPatterns.get(random.nextInt(coinPatterns.size()));
+            pattern.spawn(coinFactory, ground.getTopY(), spawnX, screenHeight);
         }
     }
 
@@ -248,35 +311,16 @@ public class PlayingState implements GameState {
         }
     }
 
+
     private void checkCoinCollisions() {
         Rectangle playerCollider = player.getCollider();
         for (Coin coin : coinFactory.getActiveCoins()) {
             if (coin.isColliding(playerCollider)) {
                 coin.setActive(false);
-                coinFactory.releaseCoin(coin);
                 GameManager.getInstance().addCoin();
             }
         }
     }
-
-    private void updateCoins(float delta) {
-        coinSpawnTimer += delta;
-        if (coinSpawnTimer > 0.5f) {
-            float spawnX = camera.position.x + (Gdx.graphics.getWidth() / 2f) + 50; // Kanan Layar
-            coinFactory.createCoinPattern(spawnX, ground.getTopY());
-            coinSpawnTimer = 0f;
-        }
-
-        float cameraLeft = camera.position.x - (Gdx.graphics.getWidth() / 2f);
-
-        for (Coin coin : coinFactory.getActiveCoins()) {
-            coin.update(delta);
-            if (coin.getPosition().x < cameraLeft - 50) {
-                coinFactory.releaseCoin(coin);
-            }
-        }
-    }
-
 
 
     @Override

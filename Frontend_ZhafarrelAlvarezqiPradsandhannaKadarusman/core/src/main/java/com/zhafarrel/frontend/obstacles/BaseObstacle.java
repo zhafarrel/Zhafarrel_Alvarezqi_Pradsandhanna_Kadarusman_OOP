@@ -1,5 +1,6 @@
 package com.zhafarrel.frontend.obstacles;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -61,6 +62,9 @@ public abstract class BaseObstacle {
 
     public Vector2 getPosition(){
         return position;
+    }
+
+    public void render(SpriteBatch batch) {
     }
 
 }

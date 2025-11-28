@@ -57,4 +57,8 @@ public class Coin {
         return position;
     }
 
+    public boolean isOffScreenCamera(float cameraLeftX) {
+        return position.x + radius < cameraLeftX;
+    }
+
 }
